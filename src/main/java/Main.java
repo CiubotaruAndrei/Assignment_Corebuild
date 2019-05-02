@@ -34,51 +34,68 @@ public class Main {
         Scanner in =  new Scanner(System.in);
         System.out.println();
         System.out.println("Select planet");
-        String planetName = in.nextLine();
+        boolean okInput;
+        okInput=false;
+        Planet planet = null;
+        //verific ca input ul sa fie valid
+        while(!okInput) {
+            String planetName = in.nextLine();
+            for (Planet p : planets)
+                if (planetName.equalsIgnoreCase(p.getName())) {
+                    planet = p;
+                    okInput = true;
+                }
+            if(!okInput)
+                System.out.println("Planet is incorrect.Select another!");
+        }
+
         System.out.println("Select Villain");
-        String villainName = in.nextLine();
+        Character villain = null;
+        okInput=false;
+        //verific ca input-ul sa fie valid
+        while(!okInput) {
+            String villainName = in.nextLine();
+            for(Character c : characters)
+                if(villainName.equalsIgnoreCase(c.getName()) && c instanceof Villain) {
+                    villain = c;
+                    okInput = true;
+                }
+            if(!okInput)
+                System.out.println("Villain is incorrect.Select another!");
+        }
+
         System.out.println("Select number of heroes(max 3)");
         int nrHeroes = Integer.parseInt(in.nextLine());
         System.out.println("Select Heroes");
         int nr=nrHeroes;
+        boolean duplicate;
         ArrayList<Character> heroes = new ArrayList<Character>();
-        boolean okInput;
+
         if(nrHeroes>3){
             System.out.println("Too many heroes");
             System.exit(1);
         }
         while(nrHeroes>0){
             //System.out.println(nrHeroes);
-            okInput=true;
+            okInput=false;
+            duplicate=false;
             String heroName = in.nextLine();
+
             for(Character hero : heroes)
-                if(heroName.equalsIgnoreCase(hero.getName())) {//verific ca eroii sa fie diferiti
-                    System.out.println("Select another hero.This already is in team");
-                    okInput=false;
-                }
-            if(okInput) {
+                if(heroName.equalsIgnoreCase(hero.getName())) //verific ca eroii sa fie diferiti
+                    duplicate = true;
+
+            if(!duplicate)
                 for (Character c : characters)
-                    if (heroName.equalsIgnoreCase(c.getName()) && c instanceof Hero)
+                    if (heroName.equalsIgnoreCase(c.getName()) && c instanceof Hero) {
                         heroes.add(c);
+                        okInput = true;
+                    }
+            //daca numele introdus e gresit se citeste din nou
+            if(okInput)
                 nrHeroes--;
-            }
-        }
-
-        Planet planet = null;
-
-        for(Planet p : planets)
-            if(planetName.equalsIgnoreCase(p.getName()))
-                planet  = p;
-
-        Character villain = null;
-
-        for(Character c : characters)
-            if(villainName.equalsIgnoreCase(c.getName()) && c instanceof Villain)
-                villain = c;
-
-        if(heroes.size()!=nr || villain==null || planet==null) {
-            System.out.println("Incorect hero, villain or planet! Run again the app.");
-            System.exit(1);
+            else
+                System.out.println("Select another hero.This is incorrect or already is in team");
         }
 
         System.out.println("You selected:");
@@ -89,7 +106,7 @@ public class Main {
 
         for(Character c : heroes) {
             applyModifiersToCharacter(planet,c);//aplic modificatorii pentru viata si atac pentru supereroi
-            System.out.println("Hero health: " + c.getHealth() + " attack: " + c.getAttack());
+            System.out.println("Hero " + c.getName() + " health: " + c.getHealth() + " attack: " + c.getAttack());
         }
         applyModifiersToCharacter(planet,villain);//aplic modificatorii pentru viata si atac prentru raufacator
         System.out.println("Villain health: " + villain.getHealth() + " attack: " + villain.getAttack());
